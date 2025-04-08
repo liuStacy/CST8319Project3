@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorPeriwinkle"
+    android:padding="16dp">
+
+    <!-- 🛍️ Shopping List Items -->
+    <ListView
+        android:id="@+id/listViewItems"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@color/colorCinereous"
+        android:dividerHeight="1dp" />
+
+    <!-- 💰 Total Spending Display -->
+    <TextView
+        android:id="@+id/tvTotalSpending"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total Spending: $0.00"
+        android:textSize="16sp"
+        android:textColor="@color/colorCinereousDark"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- 💲 Manual Price Input -->
+    <EditText
+        android:id="@+id/etPriceInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter price"
+        android:inputType="numberDecimal"
+        android:backgroundTint="@color/colorMountbattenPink"
+        android:textColor="@color/colorCinereousDark"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- ✅ Complete Shopping Button -->
+    <Button
+        android:id="@+id/buttonCompleteShopping"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Complete Shopping"
+        android:backgroundTint="@color/colorMountbattenPink"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- 🖼️ App Logo -->
+    <ImageView
+        android:id="@+id/imageViewLogoShopping"
+        android:layout_width="176dp"
+        android:layout_height="83dp"
+        android:layout_gravity="center"
+        android:contentDescription="App Logo"
+        android:src="@drawable/canva3" />
+
+</LinearLayout>
