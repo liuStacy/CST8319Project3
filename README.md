@@ -7,9 +7,10 @@ The GroceryList App is an Android application designed to simplify grocery shopp
 - **User Authentication:** Secure login and registration.
 - **Home Screen:** A central hub with navigation to various functionalities.
 - **List Management:** Create, update, and delete grocery lists.
-- **Shopping Mode:**  Enter item prices and calculate spending.
 - **Item Management:** Add and manage items within each grocery list.
-- **Settings:** Customize themes, toggle notifications, and manage spending tracking.
+- **Shopping Mode:**  Display unpurchased items, compare various store prices, track total spendings
+  and reset option for budget and total spent amount.
+- **Settings:** Customize themes, toggle notifications, and manage spending insights.
 
 This project transitions from the conceptual design phase to active implementation, following agile methodologies and coding standards to deliver a functional software product.
 
@@ -33,28 +34,42 @@ This project transitions from the conceptual design phase to active implementati
 
 - **Settings Module:**  
   Permits customization of themes (light/dark), notifications, and spending tracker settings.  
-  *Future enhancements include scheduled reminders and dynamic notifications based on user activity.*
+  *Enhancements include scheduled reminders and dynamic notifications based on user activity.*
 
 - **Log out:**  
-  Clears stored login data and navigates the user back to the login page, ensuring a secure session termination.
+  Clears session data and navigates back to the login screen.
 
 - **Data Persistence:**  
-  Uses the Room database for reliable local storage of user data, lists, and items.
+  Uses the Room database for reliable local storage of user data, lists, and items and settings.
+  Budget data is stored per list using SharedPreferences.
 
 ## Architecture & Technology Stack
 
 - **Modular Design:**  
-  The project follows a modular architecture where models, DAOs, services, and activities are clearly separated.
+  Project is structured into layers for models, DAOs, repositories, activities, adapters, and
+  background workers.
 
 - **Key Components:**
-  - **Models:** Entities (e.g., User, GroceryItem, Settings) defined using Room annotations.
-  - **Data Access Objects (DAOs):** Interfaces that define methods for database interactions.
-  - **Services/Repositories:** Classes like `UserRepository` manage authentication and business logic.
-  - **Activities:** Different screens (e.g., LoginActivity, MainActivity, ListManagementActivity) handle user interactions.
+    - **Models:**:
+      User, Item, GroceryList, Settings, and new entities:
+        - Store: for comparing prices between stores
+        - StoreSection: for grouping items in the UI
+        - ItemPriceHistory: for showing historical price trends per store
+
+    - **Data Access Objects (DAOs):** Interfaces that define methods for database interactions. New
+      Daos: ItemPriceHistoryDao (for price tracking) and SettingsDao (for user preferences).
+    - **Services/Repositories:** Abstract business logic (e.g., ItemRepository, UserRepository) and
+      support clean Room access.
+    - **Activities:** Different screens (e.g., LoginActivity, MainActivity, ListManagementActivity)
+      handle user interactions.
+    - **Adapters:** ItemAdapter: Custom adapter used in Shopping Mode with purchase toggle logic.
+    - **Background Services:**
+        - ReminderWorker: Sends daily notifications about unpurchased items.
+        - NotificationHelper: Handles channel creation and Android 13+ permission logic.
 
 - **Technology Stack:**
-  - **Programming Language:** Java
-  - **Android SDK**
+    - **Programming Language:** Java 17
+    - **Android SDK** (compileSdkVersion 35, targetSdkVersion 34, minSdkVersion 26)
   - **Room Database:** For local data persistence.
   - **Gradle:** For build automation and dependency management.
   - **Device** Medium Phone API 35

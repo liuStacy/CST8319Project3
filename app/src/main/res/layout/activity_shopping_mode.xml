@@ -1,61 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/colorPeriwinkle"
+    android:fillViewport="true"
     android:padding="16dp">
 
-    <!-- 🛍️ Shopping List Items -->
-    <ListView
-        android:id="@+id/listViewItems"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="@color/colorCinereous"
-        android:dividerHeight="1dp" />
-
-    <!-- 💰 Total Spending Display -->
-    <TextView
-        android:id="@+id/tvTotalSpending"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Total Spending: $0.00"
-        android:textSize="16sp"
-        android:textColor="@color/colorCinereousDark"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="8dp"/>
+        android:orientation="vertical">
 
-    <!-- 💲 Manual Price Input -->
-    <EditText
-        android:id="@+id/etPriceInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter price"
-        android:inputType="numberDecimal"
-        android:backgroundTint="@color/colorMountbattenPink"
-        android:textColor="@color/colorCinereousDark"
-        android:layout_marginBottom="12dp"/>
+        <!-- Section: Shopping List Selection -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="Select Shopping List"
+            android:textStyle="bold" />
 
-    <!-- ✅ Complete Shopping Button -->
-    <Button
-        android:id="@+id/buttonCompleteShopping"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Complete Shopping"
-        android:backgroundTint="@color/colorMountbattenPink"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="16dp"/>
+        <Spinner
+            android:id="@+id/spinnerLists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
 
-    <!-- 🖼️ App Logo -->
-    <ImageView
-        android:id="@+id/imageViewLogoShopping"
-        android:layout_width="176dp"
-        android:layout_height="83dp"
-        android:layout_gravity="center"
-        android:contentDescription="App Logo"
-        android:src="@drawable/canva3" />
+        <!-- Section: Store Selection -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="Select Store"
+            android:textStyle="bold" />
 
-</LinearLayout>
+        <Spinner
+            android:id="@+id/spinnerStores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Section: Budget Status -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rounded_card_background"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/textViewBudgetStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="WITHIN BUDGET"
+                android:textColor="@color/colorSuccess"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <ProgressBar
+                android:id="@+id/progressBarBudget"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/textViewTotalSpent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Spent: $0.00 of $100.00"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Section: Item List -->
+        <ListView
+            android:id="@+id/listViewItems"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:divider="@color/colorCinereous"
+            android:dividerHeight="1dp"
+            android:nestedScrollingEnabled="true" />
+
+        <!-- Section: Buttons -->
+        <Button
+            android:id="@+id/buttonShowPriceComparison"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="@string/compare_prices" />
+
+        <Button
+            android:id="@+id/buttonResetBudget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:backgroundTint="@color/colorMountbattenPink"
+            android:padding="12dp"
+            android:text="Reset Budget Limit"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/buttonCompleteShopping"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="@string/complete_shopping" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

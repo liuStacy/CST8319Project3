@@ -8,6 +8,15 @@ import java.util.List;
 
 import cst8319.group11.project3.grocerylist.models.Category;
 
+/*
+ * Author: Rongrong Liu
+ * File Name: ItemPriceHistoryDao.java
+ * Group: 11
+ * Project: Grocery List
+ * Due Date: 04/22/2025
+ * Created Date: 04/10/2025
+ *
+ * */
 @Dao
 public interface CategoryDao {
     @Insert

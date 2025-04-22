@@ -4,27 +4,31 @@ package cst8319.group11.project3.grocerylist.activity;
 * File Name: ListDetailActivity.java
 * Group: 11
 * Project: Grocery List
-* Due Date: 04/08/2025
+ * Due Date: 04/22/2025
 * Created Date: 03/10/2025
 *
 * */
+
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.app.AlertDialog;
-import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 
 import cst8319.group11.project3.grocerylist.R;
+import cst8319.group11.project3.grocerylist.database.AppDatabase;
 import cst8319.group11.project3.grocerylist.models.Item;
 import cst8319.group11.project3.grocerylist.repositories.ItemRepository;
+
 
 public class ListDetailActivity extends AppCompatActivity {
     private int listID;
@@ -63,12 +67,16 @@ public class ListDetailActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         listViewItems.setAdapter(adapter);
 
+
         setupButtonListeners();
         loadItemsForList(listID);
+
     }
 
+    // Method to set up button listeners
     private void setupButtonListeners() {
         buttonAddItem.setOnClickListener(view -> handleAddItem());
+
 
         listViewItems.setOnItemLongClickListener((parent, view, position, id) -> {
             showEditDeleteDialog(itemList.get(position));
@@ -80,6 +88,7 @@ public class ListDetailActivity extends AppCompatActivity {
         );
     }
 
+    // Method to handle adding an item
     private void handleAddItem() {
         String itemName = editItemName.getText().toString().trim();
         String brand = editItemBrand.getText().toString().trim();
@@ -91,6 +100,7 @@ public class ListDetailActivity extends AppCompatActivity {
             return;
         }
 
+        // Add the item to the database
         new Thread(() -> {
             try {
                 Item newItem = new Item(
@@ -103,6 +113,7 @@ public class ListDetailActivity extends AppCompatActivity {
                         0
                 );
 
+                // Add the item to the database and get the ID
                 long itemId = itemRepository.addItem(newItem);
                 runOnUiThread(() -> {
                     if (itemId != -1) {
@@ -120,18 +131,35 @@ public class ListDetailActivity extends AppCompatActivity {
             }
         }).start();
     }
+
     // Method to toggle the purchase status of an item
     private void togglePurchaseStatus(Item item) {
         new Thread(() -> {
             boolean newStatus = !item.isPurchased();
+
+            // Update the database
             itemRepository.updatePurchaseStatus(item.getItemID(), newStatus);
+
+            // Refresh the list display
+            Item freshItem = AppDatabase
+                    .getDatabase(getApplicationContext())
+                    .itemDao()
+                    .getItemsForList(item.getListID())
+                    .stream()
+                    .filter(i -> i.getItemID() == item.getItemID())
+                    .findFirst()
+                    .orElse(null);
+
+            Log.d("✅Refreshed", "Item = " + freshItem.getItemName() + " | purchased = " + freshItem.isPurchased());
+
             runOnUiThread(() -> {
-                // Update the item's purchased status in the list
-                item.setPurchased(newStatus);  // Update the item's purchased status
-                refreshListDisplay();          // Refresh the list display
+                item.setPurchased(newStatus);
+                refreshListDisplay();
             });
         }).start();
     }
+
+
     // Method to load items for a specific list
     private void loadItemsForList(int listID) {
         new Thread(() -> {
@@ -139,6 +167,8 @@ public class ListDetailActivity extends AppCompatActivity {
             runOnUiThread(this::refreshListDisplay);
         }).start();
     }
+
+
     // Method to refresh the list display
     private void refreshListDisplay() {
         if (itemList == null || itemList.isEmpty()) {
@@ -198,6 +228,8 @@ public class ListDetailActivity extends AppCompatActivity {
                 .setNeutralButton("Cancel", null)
                 .show();
     }
+
+
     // Method to clear the input fields
     private void clearInputFields() {
         editItemName.setText("");
@@ -214,4 +246,5 @@ public class ListDetailActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

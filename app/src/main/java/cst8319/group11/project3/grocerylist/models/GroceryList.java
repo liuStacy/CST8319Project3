@@ -79,4 +79,9 @@ public class GroceryList {
         this.creationDate = creationDate;
     }
 
+    @Override
+    public String toString() {
+        return this.listName;  // 显示列表名
+    }
+
 }

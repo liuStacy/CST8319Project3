@@ -1,112 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:padding="24dp"
-android:background="@color/colorPeriwinkle"
-tools:context="cst8319.group11.project3.grocerylist.activity.SettingsPreferenceActivity">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPeriwinkle"
+    android:padding="24dp"
+    tools:context="cst8319.group11.project3.grocerylist.activity.SettingsPreferenceActivity">
 
-<!-- 🌗 Theme Settings Title -->
-<TextView
-    android:id="@+id/themeSettingsLabel"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/theme_settings"
-    android:textSize="18sp"
-    android:textStyle="bold"
-    android:textColor="@color/colorCinereousDark"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintStart_toStartOf="parent" />
-
-<!-- 🌙 Theme Radio Buttons -->
-<RadioGroup
-    android:id="@+id/themeRadioGroup"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    app:layout_constraintTop_toBottomOf="@id/themeSettingsLabel"
-    app:layout_constraintStart_toStartOf="parent">
-
-    <RadioButton
-        android:id="@+id/radioLightTheme"
+    <!-- 🌗 Theme Settings Title -->
+    <TextView
+        android:id="@+id/themeSettingsLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/light_theme"
-        android:textColor="@color/colorMountbattenPink" />
+        android:text="@string/theme_settings"
+        android:textColor="@color/colorCinereousDark"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <RadioButton
-        android:id="@+id/radioDarkTheme"
+    <!-- 🌙 Theme Radio Buttons -->
+    <RadioGroup
+        android:id="@+id/themeRadioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/dark_theme"
-        android:textColor="@color/colorMountbattenPink" />
-</RadioGroup>
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/themeSettingsLabel">
 
-<!-- 🔔 Notification Toggle -->
-<Switch
-    android:id="@+id/switchNotifications"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    android:text="@string/enable_notifications"
-    android:textColor="@color/colorCinereousDark"
-    app:layout_constraintTop_toBottomOf="@id/themeRadioGroup"
-    app:layout_constraintStart_toStartOf="parent" />
+        <RadioButton
+            android:id="@+id/radioLightTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/light_theme"
+            android:textColor="@color/colorMountbattenPink" />
 
-<!-- 💸 Spending Tracker Label -->
-<TextView
-    android:id="@+id/spendingTrackerLabel"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/spending_tracker"
-    android:textSize="18sp"
-    android:textStyle="bold"
-    android:textColor="@color/colorCinereousDark"
-    android:layout_marginTop="24dp"
-    app:layout_constraintTop_toBottomOf="@id/switchNotifications"
-    app:layout_constraintStart_toStartOf="parent" />
+        <RadioButton
+            android:id="@+id/radioDarkTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dark_theme"
+            android:textColor="@color/colorMountbattenPink" />
+    </RadioGroup>
 
-<!-- 💰 Spending Tracker Options -->
-<RadioGroup
-    android:id="@+id/spendingTrackerRadioGroup"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    app:layout_constraintTop_toBottomOf="@id/spendingTrackerLabel"
-    app:layout_constraintStart_toStartOf="parent">
-
-    <RadioButton
-        android:id="@+id/radioSpendingTrackerOn"
+    <!-- 🔔 Notification Toggle -->
+    <Switch
+        android:id="@+id/switchNotifications"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/spending_tracker_on"
-        android:textColor="@color/colorMountbattenPink" />
+        android:layout_marginTop="16dp"
+        android:text="@string/enable_notifications"
+        android:textColor="@color/colorCinereousDark"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/themeRadioGroup" />
 
-    <RadioButton
-        android:id="@+id/radioSpendingTrackerOff"
+    <!-- 💸 Spending Tracker Label -->
+    <TextView
+        android:id="@+id/spendingTrackerLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/spending_tracker_off"
-        android:textColor="@color/colorMountbattenPink" />
-</RadioGroup>
+        android:layout_marginTop="24dp"
+        android:text="@string/spending_tracker"
+        android:textColor="@color/colorCinereousDark"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/switchNotifications" />
 
-<!-- 💾 Save Settings Button -->
-<Button
-    android:id="@+id/buttonSaveSettings"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/save_settings"
-    android:backgroundTint="@color/colorMountbattenPink"
-    android:textColor="@android:color/white"
-    android:layout_marginTop="32dp"
-    app:layout_constraintTop_toBottomOf="@id/spendingTrackerRadioGroup"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent" />
+    <!-- 💰 Spending Tracker Options -->
+    <RadioGroup
+        android:id="@+id/spendingTrackerRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spendingTrackerLabel">
 
-<!-- 🖼️ App Logo Image -->
+        <RadioButton
+            android:id="@+id/radioSpendingTrackerOn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/spending_tracker_on"
+            android:textColor="@color/colorMountbattenPink" />
+
+        <RadioButton
+            android:id="@+id/radioSpendingTrackerOff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/spending_tracker_off"
+            android:textColor="@color/colorMountbattenPink" />
+    </RadioGroup>
+
+    <!-- 💾 Save Settings Button -->
+    <Button
+        android:id="@+id/buttonSaveSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:backgroundTint="@color/colorMountbattenPink"
+        android:text="@string/save_settings"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spendingTrackerRadioGroup" />
+
+    <!-- 🖼️ App Logo Image -->
     <ImageView
         android:id="@+id/imageViewLogoSettings"
         android:layout_width="272dp"

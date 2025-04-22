@@ -54,6 +54,18 @@ public class ItemRepository {
         AppDatabase.databaseWriteExecutor.execute(() -> itemDao.updateItemDetails(itemID, price, quantity, brand));
     }
 
+    // 👇 Add this method to ItemRepository.java
+    public List<Item> getUnpurchasedItemsForList(int listID) {
+        Future<List<Item>> future = AppDatabase.databaseWriteExecutor.submit(() ->
+                itemDao.getUnpurchasedItemsForList(listID));
+        try {
+            return future.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     //   Get only the purchased items for budget tracking.
     public List<Item> getPurchasedItemsForList(int listID) {
         Future<List<Item>> future = AppDatabase.databaseWriteExecutor.submit(() -> itemDao.getPurchasedItemsForList(listID));

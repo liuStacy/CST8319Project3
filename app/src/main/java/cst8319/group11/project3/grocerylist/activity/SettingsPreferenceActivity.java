@@ -1,62 +1,71 @@
 package cst8319.group11.project3.grocerylist.activity;
-/*
- * Author: Rongrong Liu
- * File Name: SettingsPreferenceActivity.java
- * Group: 11
- * Project: Grocery List
- * Due Date: 04/08/2025
- * Created Date: 03/10/2025
- *
- * */
-import android.content.Intent;
+
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+
+import java.util.concurrent.TimeUnit;
 
 import cst8319.group11.project3.grocerylist.R;
 import cst8319.group11.project3.grocerylist.dao.SettingsDao;
 import cst8319.group11.project3.grocerylist.database.AppDatabase;
 import cst8319.group11.project3.grocerylist.models.Settings;
+import cst8319.group11.project3.grocerylist.workers.ReminderWorker;
 
+/*
+ * Author: Rongrong Liu
+ * File Name: SettingsPreferenceActivity.java
+ * Group: 11
+ * Project: Grocery List
+ * Due Date: 04/22/2025
+ * Created Date: 03/10/2025
+ *
+ * */
 public class SettingsPreferenceActivity extends AppCompatActivity {
 
-    private RadioButton radioLightTheme;
-    private RadioButton radioDarkTheme;
-    private Switch switchNotifications;
-    private RadioButton radioSpendingTrackerOn;
-    private RadioButton radioSpendingTrackerOff;
-    private Button buttonSaveSettings;
-    private SettingsDao settingsDao;
-    private int currentUserId = -1; // 从登录信息或 Intent 获取
-    private Settings userSettings;
-    private RadioGroup themeRadioGroup;
-    private RadioGroup spendingTrackerRadioGroup;
-    private boolean isSettingsLoaded = false;
+    private static final int REQUEST_POST_NOTIFICATIONS = 1002;
 
-    // Use SharedPreferences to store and retrieve user preferences
+    private RadioButton radioLightTheme, radioDarkTheme;
+    private Switch switchNotifications;
+    private RadioButton radioSpendingTrackerOn, radioSpendingTrackerOff;
+    private Button buttonSaveSettings;
+
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private SettingsDao settingsDao;
+    private Settings userSettings;
+    private int currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Set theme based on SharedPreferences
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String theme = sharedPreferences.getString("theme_preference", "light");
-        if ("dark".equalsIgnoreCase(theme)) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
+        AppCompatDelegate.setDefaultNightMode(
+                "dark".equalsIgnoreCase(theme)
+                        ? AppCompatDelegate.MODE_NIGHT_YES
+                        : AppCompatDelegate.MODE_NIGHT_NO
+        );
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_preference);
 
@@ -66,10 +75,10 @@ public class SettingsPreferenceActivity extends AppCompatActivity {
         }
 
         editor = sharedPreferences.edit();
-        settingsDao = AppDatabase.getDatabase(getApplicationContext()).settingsDao();
+        settingsDao = AppDatabase.getDatabase(this).settingsDao();
 
         // Fetch current user ID from intent
-        currentUserId = (int)getIntent().getLongExtra("USER_ID", -1);
+        currentUserId = (int) getIntent().getLongExtra("USER_ID", -1);
 
         radioLightTheme = findViewById(R.id.radioLightTheme);
         radioDarkTheme = findViewById(R.id.radioDarkTheme);
@@ -77,49 +86,26 @@ public class SettingsPreferenceActivity extends AppCompatActivity {
         radioSpendingTrackerOn = findViewById(R.id.radioSpendingTrackerOn);
         radioSpendingTrackerOff = findViewById(R.id.radioSpendingTrackerOff);
         buttonSaveSettings = findViewById(R.id.buttonSaveSettings);
-        themeRadioGroup = findViewById(R.id.themeRadioGroup);
-        spendingTrackerRadioGroup = findViewById(R.id.spendingTrackerRadioGroup);
 
         // Set initial theme based on SharedPreferences
         if ("dark".equalsIgnoreCase(theme)) {
             radioDarkTheme.setChecked(true);
-            radioLightTheme.setChecked(false);
         } else {
             radioLightTheme.setChecked(true);
-            radioDarkTheme.setChecked(false);
         }
 
         // Load settings from database
         loadSettings();
 
-        themeRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            if (isSettingsLoaded) {
-                if (checkedId == R.id.radioLightTheme) {
-                    Log.d("SettingsActivity", "Light Theme selected");
-                } else if (checkedId == R.id.radioDarkTheme) {
-                    Log.d("SettingsActivity", "Dark Theme selected");
-                }
-            }
-        });
-
-        spendingTrackerRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            if (isSettingsLoaded) {
-                if (checkedId == R.id.radioSpendingTrackerOn) {
-                    Log.d("SettingsActivity", "Spending Tracker On selected");
-                } else if (checkedId == R.id.radioSpendingTrackerOff) {
-                    Log.d("SettingsActivity", "Spending Tracker Off selected");
-                }
-            }
-        });
-
-        buttonSaveSettings.setOnClickListener(view -> {
+        // Request notification permission
+        buttonSaveSettings.setOnClickListener(v -> {
             saveSettings();
             Toast.makeText(this, "Settings saved!", Toast.LENGTH_SHORT).show();
-            // Reload settings after saving
             recreate();
         });
     }
 
+    // Load settings from database
     private void loadSettings() {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             userSettings = settingsDao.getSettingsForUser(currentUserId);
@@ -128,34 +114,26 @@ public class SettingsPreferenceActivity extends AppCompatActivity {
                     switchNotifications.setChecked(userSettings.isNotificationsEnabled());
                     if (userSettings.isTrackSpending()) {
                         radioSpendingTrackerOn.setChecked(true);
-                        radioSpendingTrackerOff.setChecked(false);
                     } else {
                         radioSpendingTrackerOff.setChecked(true);
-                        radioSpendingTrackerOn.setChecked(false);
                     }
                 } else {
-                    // Initialize with default values
                     userSettings = new Settings(currentUserId, false, "light", false, 0, false);
                     switchNotifications.setChecked(false);
                     radioSpendingTrackerOff.setChecked(true);
-                    radioSpendingTrackerOn.setChecked(false);
                 }
-                isSettingsLoaded = true;
             });
         });
     }
 
+    // Save settings to database
     private void saveSettings() {
         boolean notificationsEnabled = switchNotifications.isChecked();
-        // Set theme based on radio buttons
         String theme = radioDarkTheme.isChecked() ? "dark" : "light";
         boolean trackSpending = radioSpendingTrackerOn.isChecked();
 
-        // Save theme to SharedPreferences
-        editor.putString("theme_preference", theme);
-        editor.apply();
+        editor.putString("theme_preference", theme).apply();
 
-        // Save settings to database
         if (userSettings == null) {
             userSettings = new Settings(currentUserId, notificationsEnabled, theme, false, 0, trackSpending);
         } else {
@@ -168,11 +146,75 @@ public class SettingsPreferenceActivity extends AppCompatActivity {
             settingsDao.insertOrUpdate(userSettings);
         });
 
-        // Apply theme based on SharedPreferences
-        if ("dark".equalsIgnoreCase(theme)) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        WorkManager wm = WorkManager.getInstance(getApplicationContext());
+
+        if (notificationsEnabled &&
+                (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                        ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                                == PackageManager.PERMISSION_GRANTED)) {
+
+            // Periodically trigger ReminderWorker, every day
+            PeriodicWorkRequest periodic = new PeriodicWorkRequest.Builder(
+                    ReminderWorker.class, 1, TimeUnit.DAYS).build();
+
+            wm.enqueueUniquePeriodicWork("DailyReminder", ExistingPeriodicWorkPolicy.REPLACE, periodic);
+
+            // Immediately trigger ReminderWorker, for testing purposes
+            OneTimeWorkRequest oneTime = new OneTimeWorkRequest.Builder(ReminderWorker.class).build();
+            wm.enqueue(oneTime);
+
+        } else if (notificationsEnabled) {
+            Toast.makeText(this, "Please grant notification permission in Settings", Toast.LENGTH_LONG).show();
         } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            wm.cancelUniqueWork("DailyReminder");
+        }
+
+        AppCompatDelegate.setDefaultNightMode(
+                "dark".equalsIgnoreCase(theme)
+                        ? AppCompatDelegate.MODE_NIGHT_YES
+                        : AppCompatDelegate.MODE_NIGHT_NO
+        );
+    }
+
+    // Request notification permission
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Notification Permission")
+                        .setMessage("Grant notification permission to receive reminders.")
+                        .setPositiveButton("Allow", (dialog, which) -> ActivityCompat
+                                .requestPermissions(
+                                        this,
+                                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                                        REQUEST_POST_NOTIFICATIONS
+                                ))
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            } else {
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        REQUEST_POST_NOTIFICATIONS
+                );
+            }
+        }
+    }
+
+    // Handle permission result
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_POST_NOTIFICATIONS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Notifications enabled", Toast.LENGTH_SHORT).show();
+                saveSettings(); // 👈 Re-trigger to enqueue
+            } else {
+                Toast.makeText(this, "Permission denied. No reminders.", Toast.LENGTH_LONG).show();
+                switchNotifications.setChecked(false);
+            }
         }
     }
 
@@ -180,9 +222,7 @@ public class SettingsPreferenceActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            Intent intent = new Intent(SettingsPreferenceActivity.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

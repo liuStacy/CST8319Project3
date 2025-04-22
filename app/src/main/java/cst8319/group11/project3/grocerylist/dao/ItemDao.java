@@ -9,8 +9,10 @@ import java.util.List;
 
 import cst8319.group11.project3.grocerylist.models.Item;
 
+
 @Dao
 public interface ItemDao {
+
     @Insert
     long insert(Item item);
 
@@ -26,11 +28,21 @@ public interface ItemDao {
     @Query("UPDATE items SET purchased = :purchased WHERE itemID = :itemID")
     void updatePurchaseStatus(int itemID, boolean purchased);
 
-    // Update price, quantity, and brand if needed
     @Query("UPDATE items SET price = :price, quantity = :quantity, brand = :brand WHERE itemID = :itemID")
     void updateItemDetails(int itemID, double price, int quantity, String brand);
 
-    // Method to retrieve purchased items, calculating total spending (budget tracking).
+    // ✅ For budget/spending tracker
     @Query("SELECT * FROM items WHERE listID = :listID AND purchased = 1")
     List<Item> getPurchasedItemsForList(int listID);
+
+    // ✅ For reminder notification
+    @Query("SELECT * FROM items WHERE listID = :listID AND purchased = 0")
+    List<Item> getUnpurchasedItemsForList(int listID);
+
+
+    // ✅ In ItemDao.java
+    @Query("SELECT * FROM items WHERE purchased = 0 AND listID IN (SELECT listID FROM grocery_lists WHERE userID = :userId)")
+    List<Item> getUnpurchasedItemsForUser(int userId);
+
+
 }

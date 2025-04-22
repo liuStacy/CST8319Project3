@@ -2,7 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Add these permissions to your manifest -->
+    <uses-permission android:name="android.permission.VIBRATE" />
     <application
+        android:name="cst8319.group11.project3.grocerylist.app.GroceryApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -22,12 +26,12 @@
             </intent-filter>
         </activity>
 
-        <!-- 新增MainActivity注册 -->
+        <!-- MainActivity -->
         <activity
             android:name=".activity.MainActivity"
-            android:exported="false" />  <!-- 不允许外部直接启动 -->
+            android:exported="false" />  <!-- Not exported -->
 
-        <!-- 其他Activity注册（ListManagementActivity等） -->
+        <!-- Other Activity（ListManagementActivity、ShoppingModeActivity、SettingsPreferenceActivity、ListDetailActivity） -->
         <activity android:name=".activity.ListManagementActivity" />
         <activity android:name=".activity.ShoppingModeActivity" />
         <activity android:name=".activity.SettingsPreferenceActivity" />

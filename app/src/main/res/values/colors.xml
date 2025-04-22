@@ -12,5 +12,8 @@
     <color name="colorMountbattenPink">#9F838C</color>
     <color name="colorCinereous">#8D7471</color>
     <color name="colorCinereousDark">#816F68</color>
+    <color name="colorSuccess">#4CAF50</color> <!-- Green -->
+    <color name="colorWarning">#FF9800</color> <!-- Orange -->
+    <color name="colorError">#F44336</color>   <!-- Red -->
 
 </resources>
